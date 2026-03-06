@@ -1,6 +1,7 @@
 using DotNet_API_22_.Data;
 using DotNet_API_22_.Helper.JwtHelper;
 using DotNet_API_22_.Service.AuthService;
+using DotNet_API_22_.Service.SchoolService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Scalar.AspNetCore;
@@ -16,7 +17,9 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<EduHubDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IAuthService,AuthService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddScoped<ISchoolService, SchoolService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());    
 
