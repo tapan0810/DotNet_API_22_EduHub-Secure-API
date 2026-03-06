@@ -1,5 +1,9 @@
 using DotNet_API_22_.Data;
+using DotNet_API_22_.Helper.JwtHelper;
+using DotNet_API_22_.Service.AuthService;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,12 +16,19 @@ builder.Services.AddOpenApi();
 builder.Services.AddDbContext<EduHubDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IAuthService,AuthService>();
+
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());    
+
+builder.Services.AddScoped<IJwtHelper,JwtHelper>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();
