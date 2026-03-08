@@ -4,7 +4,7 @@ namespace DotNet_API_22_.Service.SchoolService
 {
     public interface ISchoolService
     {
-        public Task<List<GetAllSchoolDto>> GetAllSchool();
+        public Task<List<GetAllSchoolDto>> GetAllSchool(int pageNumber,int pageSize);
         public Task<GetSchoolById?> GetSchoolById(int schoolId);
         public Task<GetSchoolById?> CreateSchool(CreateSchoolDto school);
         public Task<bool> UpdateSchool(int id,UpdateSchoolDto school);

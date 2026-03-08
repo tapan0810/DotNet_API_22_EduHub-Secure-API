@@ -10,9 +10,9 @@ namespace DotNet_API_22_.Controllers
     public class SchoolController(ISchoolService schoolService) : ControllerBase
     {
         [HttpGet("GetAllSchools")]
-        public async Task<ActionResult<GetAllSchoolDto>> GetAllSchools()
+        public async Task<ActionResult<GetAllSchoolDto>> GetAllSchools(int pageNumber,int pageSize)
         {
-            var schools = await schoolService.GetAllSchool();
+            var schools = await schoolService.GetAllSchool(pageNumber,pageSize);
             return Ok(schools);
         }
 
