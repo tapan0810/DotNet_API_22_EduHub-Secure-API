@@ -35,9 +35,13 @@ namespace DotNet_API_22_.Service.SchoolService
 
         public async Task<List<GetAllSchoolDto>> GetAllSchool(int pageNumber,int pageSize)
         {
-            var schools = await _context.Schools.ToListAsync();
+            var schools = await _context.Schools
+                .OrderBy(x => x.SchoolId)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
 
-            return mapper.Map<List<GetAllSchoolDto>>(schools).Skip((pageNumber - 1) * pageSize).ToList();
+            return mapper.Map<List<GetAllSchoolDto>>(schools);
         }
 
         public async Task<GetSchoolById?> GetSchoolById(int schoolId)
