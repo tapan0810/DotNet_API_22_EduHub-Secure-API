@@ -25,6 +25,12 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IJwtHelper,JwtHelper>();
 
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = "localhost:6379";
+    options.InstanceName = "EduHubCache_";
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

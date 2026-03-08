@@ -3,10 +3,12 @@ using DotNet_API_22_.Data;
 using DotNet_API_22_.Entities.Dtos.SchoolDtos;
 using DotNet_API_22_.Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
 
 namespace DotNet_API_22_.Service.SchoolService
 {
-    public class SchoolService (EduHubDbContext _context,IMapper mapper): ISchoolService
+    public class SchoolService (EduHubDbContext _context,IMapper mapper,IDistributedCache cache): ISchoolService
     {
         public async Task<GetSchoolById?> CreateSchool(CreateSchoolDto school)
         {
@@ -35,13 +37,37 @@ namespace DotNet_API_22_.Service.SchoolService
 
         public async Task<List<GetAllSchoolDto>> GetAllSchool(int pageNumber,int pageSize)
         {
+            string cachekey = $"schools_{pageNumber}_{pageSize}";
+
+            //Check cache data
+            var cacheData = await cache.GetStringAsync(cachekey);
+
+            //If Cache has data then return the data skip the db queries
+            if(cacheData != null)
+            {
+                return JsonSerializer.Deserialize<List<GetAllSchoolDto>>(cacheData)!;
+            }
+
+            //Delay to check Redis
+            await Task.Delay(5000);
+
             var schools = await _context.Schools
                 .OrderBy(x => x.SchoolId)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync();
 
-            return mapper.Map<List<GetAllSchoolDto>>(schools);
+            var result =  mapper.Map<List<GetAllSchoolDto>>(schools);
+
+            //Save to redis
+            var options = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+            };
+
+            await cache.SetStringAsync(cachekey, JsonSerializer.Serialize(result), options);
+
+            return result;
         }
 
         public async Task<GetSchoolById?> GetSchoolById(int schoolId)
