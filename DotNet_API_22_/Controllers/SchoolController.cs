@@ -7,7 +7,7 @@ namespace DotNet_API_22_.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SchoolController (ISchoolService schoolService): ControllerBase
+    public class SchoolController(ISchoolService schoolService) : ControllerBase
     {
         [HttpGet("GetAllSchools")]
         public async Task<ActionResult<GetAllSchoolDto>> GetAllSchools()
@@ -34,8 +34,23 @@ namespace DotNet_API_22_.Controllers
 
             var sch = await schoolService.CreateSchool(school);
 
-            return CreatedAtAction(nameof(GetSchoolById), new {id=sch.SchoolId}, sch);
+            return CreatedAtAction(nameof(GetSchoolById), new { id = sch.SchoolId }, sch);
 
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<bool>> UpdateSchool(int id,UpdateSchoolDto school)
+        {
+            var sch = await schoolService.UpdateSchool(id, school);
+            return Ok(sch);
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<ActionResult<bool>> DeleteSchool(int id)
+        {
+            var res = await schoolService.DeleteSchool(id);
+
+            return NoContent();
         }
 
     }
