@@ -46,7 +46,7 @@ namespace DotNet_API_22_.Service.SchoolService
 
         public async Task<GetSchoolById?> GetSchoolById(int schoolId)
         {
-            var school = _context.Schools.FirstOrDefault(x => x.SchoolId == schoolId);
+            var school =await _context.Schools.FirstOrDefaultAsync(x => x.SchoolId == schoolId);
 
             if (school is null)
                 throw new Exception("School Not Found");
