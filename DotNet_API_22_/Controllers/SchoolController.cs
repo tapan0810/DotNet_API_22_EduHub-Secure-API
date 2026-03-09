@@ -2,11 +2,13 @@
 using DotNet_API_22_.Service.SchoolService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace DotNet_API_22_.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("token")]
     public class SchoolController(ISchoolService schoolService) : ControllerBase
     {
         [HttpGet("GetAllSchools")]
